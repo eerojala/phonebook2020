@@ -1,7 +1,16 @@
 const express = require('express')
-const app = express()  // Takes the JSON data that came with the request, transforms it into an object and sets it as the body field of the request object
+const morgan = require('morgan')
 
-app.use(express.json())
+const app = express()  
+
+
+// Middlewares are functions which can be used to handle request and response objects in express)
+// Middlewares are enabled like this: app.use(middleware)
+// Middlewares are run in the order which they are enabled in the code (from top to bottom)
+// Middlewares:
+app.use(express.json()) // Takes the JSON data that came with the request, transforms it into an object and sets it as the body field of the request object
+app.use(morgan('tiny')) // Logs HTTP requests
+
 
 let entries = [
   {
