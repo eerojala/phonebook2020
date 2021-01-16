@@ -34,6 +34,17 @@ app.get('/api/entries', (request, response) => {
   return response.json(entries)
 })
 
+app.get('/api/entries/:id', (request, response) => {
+  const id = Number(request.params.id)
+  const entry = entries.find(e => e.id === id)
+
+  if (entry) {
+    return response.json(entry)
+  } else {
+    return response.status(404).end()
+  }
+})
+
 
 // const generateId = () => {
 //   const maxId = notes.length > 0
