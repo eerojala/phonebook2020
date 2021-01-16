@@ -45,6 +45,13 @@ app.get('/api/entries/:id', (request, response) => {
   }
 })
 
+app.delete('/api/entries/:id', (request, response) => {
+  const id = Number(request.params.id)
+  entries = entries.filter(e => e.id !== id)
+
+  response.status(204).end()
+})
+
 
 // const generateId = () => {
 //   const maxId = notes.length > 0
