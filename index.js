@@ -1,5 +1,5 @@
 const express = require('express')
-const app = express()
+const app = express()  // Takes the JSON data that came with the request, transforms it into an object and sets it as the body field of the request object
 
 app.use(express.json())
 
@@ -25,6 +25,10 @@ let entries = [
     number: "39-23-6434122"
   }
 ]
+
+app.get('/info', (request, response) => {
+  return response.send(`<p>Phonebook has info for ${entries.length} people</p><br><p>${new Date()}</p>`)
+})
 
 app.get('/api/entries', (request, response) => {
   return response.json(entries)
