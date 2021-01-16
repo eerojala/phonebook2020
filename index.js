@@ -1,15 +1,23 @@
 const express = require('express')
 const morgan = require('morgan')
 
+morgan.token('body', (req, res) =>  {
+  // this function will be called in the :body -section of the format below
+  return JSON.stringify(req.body)
+})
+
+morgan.token('method', (req, res) => {
+  return 'Hello'
+})
+
 const app = express()  
 
-
-// Middlewares are functions which can be used to handle request and response objects in express)
+// Middlewares are functions which can be used to handle request and response objects in node.js and express)
 // Middlewares are enabled like this: app.use(middleware)
 // Middlewares are run in the order which they are enabled in the code (from top to bottom)
 // Middlewares:
 app.use(express.json()) // Takes the JSON data that came with the request, transforms it into an object and sets it as the body field of the request object
-app.use(morgan('tiny')) // Logs HTTP requests
+app.use(morgan(':method :url :status :response-time ms :body')) // Logs HTTP requests
 
 
 let entries = [
