@@ -49,17 +49,26 @@ app.delete('/api/entries/:id', (request, response) => {
   const id = Number(request.params.id)
   entries = entries.filter(e => e.id !== id)
 
-  response.status(204).end()
+  return response.status(204).end()
 })
 
+app.post('/api/entries', (request, response) => {
+  const id = Math.floor(Math.random() * 10000)
+  const entry = request.body
 
-// const generateId = () => {
-//   const maxId = notes.length > 0
-//   ? Math.max(...notes.map(n => n.id))
-//   : 0
+  if (JSON.stringify(entry) === JSON.stringify({})) {
+    // empty object
+    return response.status(400).json({
+      error: 'empty object'
+    })
+  }
 
-//   return maxId + 1
-// }
+  entry.id = id
+  entries = entries.concat(entry)
+
+  return response.json(entry)
+})
+
 
 const PORT = 3001
 
