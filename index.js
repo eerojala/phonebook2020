@@ -54,21 +54,32 @@ app.delete('/api/entries/:id', (request, response) => {
 
 app.post('/api/entries', (request, response) => {
   const id = Math.floor(Math.random() * 10000)
-  const entry = request.body
+  const newEntry = request.body
 
-  if (JSON.stringify(entry) === JSON.stringify({})) {
+  if (JSON.stringify(newEntry) === JSON.stringify({})) {
     // empty object
     return response.status(400).json({
       error: 'empty object'
     })
   }
 
-  entry.id = id
-  entries = entries.concat(entry)
+  if (!newEntry.name || !newEntry.number) {
+    return response.status(400).json({
+      error: 'missing fields'
+    })
+  }
 
-  return response.json(entry)
+  if (entries.find(e => e.name === newEntry.name)) {
+    return response.status(400).json({
+      error: 'name must be unique'
+    })
+  }
+
+  newEntry.id = id
+  entries = entries.concat(newEntry)
+
+  return response.json(newEntry)
 })
-
 
 const PORT = 3001
 
