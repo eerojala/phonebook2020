@@ -18,6 +18,8 @@ const app = express()
 // Middlewares are enabled like this: app.use(middleware)
 // Middlewares are run in the order which they are enabled in the code (from top to bottom)
 // Middlewares:
+app.use(express.static('build')) // Allows to serve static files in the given directory (a middleware built into express, do not need to install separately)
+                                 // Using this express will first check if a file matching the given path in a GET-requests exists in the given directory, and then return it to the browser instead
 app.use(cors()) // Allows requests from other origins (CORS), so axios can get fetch data from the front-end
 app.use(express.json()) // Takes the JSON data that came with the request, transforms it into an object and sets it as the body field of the request object
 app.use(morgan(':method :url :status :response-time ms :body')) // Logs HTTP requests
@@ -102,7 +104,7 @@ app.post('/api/entries', (request, response) => {
 })
 
 const PORT = process.env.PORT || 3001 // assigns the port number from an environment variable or if it does not exist, then 3001 as default
-
+                                      // heroku has a PORT environment variable automatically
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
