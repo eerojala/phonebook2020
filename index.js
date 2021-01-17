@@ -1,14 +1,16 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 
 morgan.token('body', (req, res) =>  {
   // this function will be called in the :body -section of the format below
-  return JSON.stringify(req.body)
+  return JSON.stringify(req.body) // displays the json data that come with the requests
 })
 
-morgan.token('method', (req, res) => {
-  return 'Hello'
-})
+// morgan.token('method', (req, res) => {
+//   // this function will be called in the :method -section of the format below
+//   return 'Hello'
+// })
 
 const app = express()  
 
@@ -16,6 +18,7 @@ const app = express()
 // Middlewares are enabled like this: app.use(middleware)
 // Middlewares are run in the order which they are enabled in the code (from top to bottom)
 // Middlewares:
+app.use(cors()) // Allows requests from other origins (CORS), so axios can get fetch data from the front-end
 app.use(express.json()) // Takes the JSON data that came with the request, transforms it into an object and sets it as the body field of the request object
 app.use(morgan(':method :url :status :response-time ms :body')) // Logs HTTP requests
 
@@ -98,7 +101,7 @@ app.post('/api/entries', (request, response) => {
   return response.json(newEntry)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001 // assigns the port number from an environment variable or if it does not exist, then 3001 as default
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
