@@ -41,7 +41,9 @@ app.use(morgan(':method :url :status :response-time ms :body')) // Logs HTTP req
 const Entry = require('./models/entry.js')
 
 app.get('/info', (request, response) => {
-  return response.send(`<p>Phonebook has info for ${entries.length} people</p><br><p>${new Date()}</p>`)
+  Entry.find({}).then(entries => {
+    response.send(`<p>Phonebook has info for ${entries.length} people</p><br><p>${new Date()}</p>`)
+  })
 })
 
 app.get('/api/entries', (request, response, next) => {
