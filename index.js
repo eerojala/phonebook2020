@@ -40,6 +40,7 @@ app.use(morgan(':method :url :status :response-time ms :body')) // Logs HTTP req
 // Models
 const Entry = require('./models/entry.js')
 
+
 app.get('/info', (request, response) => {
   Entry.find({}).then(entries => {
     response.send(`<p>Phonebook has info for ${entries.length} people</p><br><p>${new Date()}</p>`)
@@ -83,36 +84,22 @@ app.delete('/api/entries/:id', (request, response, next) => {
 })
 
 app.post('/api/entries', (request, response, next) => {
-  // const id = Math.floor(Math.random() * 10000)
-  // const newEntry = request.body
-
   const body = request.body
-
-  if (JSON.stringify(body) === JSON.stringify({})) {
-    // empty object
-    return response.status(400).json({
-      error: 'empty object'
-    })
-  }
-
-  if (!body.name || !body.number) {
-    return response.status(400).json({
-      error: 'missing fields'
-    })
-  }
-
-  // if (entries.find(e => e.name === body.name)) {
-  //   return response.status(400).json({
-  //     error: 'name must be unique'
-  //   })
-  // }
 
   const entry = new Entry({
     name: body.name,
     number: body.number
   })
 
-  entry.save()
+  // chaining promises like this is good when there are multiple asynchronous operations
+  // entry.save() // returns a promise with the saved entry
+  //   .then(savedEntry => savedEntry.toJSON()) // returns returns a promise with the formatted entry
+  //   .then(savedAndFormattedEntry => {
+  //     return response.json(savedAndFormattedEntry)
+  //   }) 
+  //   .catch(error => next(error))
+
+  entry.save() // in our case this is fine though
     .then(savedEntry => {
       return response.json(savedEntry)
     })
@@ -143,6 +130,8 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError') {
     // given id does not match the format of a MongoDB id
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).send({ error: error.message })
   }
 }
 
