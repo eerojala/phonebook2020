@@ -1,12 +1,13 @@
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 
+// eslint-disable-next-line no-undef
 const url = process.env.MONGODB_URI // NEVER save database credientals into code
 
 console.log('connecting to', url)
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
-  .then(result => {
+  .then(() => {
     console.log('Successfully connected to MongoDB')
   })
   .catch((error) => {
@@ -37,4 +38,4 @@ entrySchema.set('toJSON', { // this is done so id is returned in field 'id' inst
   }
 })
 
-  module.exports = mongoose.model('Entry', entrySchema)
+module.exports = mongoose.model('Entry', entrySchema)

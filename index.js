@@ -1,13 +1,14 @@
-require('dotenv').config() // library that loads environment variables from the file .env (NOTE: REMEMBER TO GITIGNORE IT)
-                           // also remember to require dotenv before requiring models, so we can be sure that the database link can be read correctly
+// library that loads environment variables from the file .env (NOTE: REMEMBER TO GITIGNORE IT)
+// also remember to require dotenv before requiring models, so we can be sure that the database link can be read correctly
+require('dotenv').config()
 
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 
-morgan.token('body', (req, res) =>  {
+morgan.token('body', (request, response) =>  {
   // this function will be called in the :body -section of the format below
-  return JSON.stringify(req.body) // displays the json data that come with the requests
+  return JSON.stringify(request.body) // displays the json data that come with the requests
 })
 
 // another example for morgan:
@@ -16,24 +17,23 @@ morgan.token('body', (req, res) =>  {
 //   return 'Hello'
 // })
 
-const app = express()  
-
+const app = express()
 
 // Middlewares are functions which can be used to handle request and response objects in node.js and express)
 // Middlewares are enabled like this: app.use(middleware)
 // Middlewares are run in the order which they are enabled in the code (from top to bottom)
 
-// NOTE: The correct order of routes and middleware are very important 
+// NOTE: The correct order of routes and middleware are very important
 // 1. Regular middleware (internal order of these is also very important, for example express.json() should be one of the first middlewares to be used since we use request.body so much)
 // 2. Regular routes
 // 3. Routes which handle unknown endpoints (404)
 // 4. Error handling middleware
 
 // Middlewares:
-app.use(express.static('build')) // Allows to serve static files in the given directory (a middleware built into express, do not need to install separately)
-                                 // Using this express will first check if a file matching the given path in a GET-requests exists in the given directory, and then return it to the browser instead
-                                 
-app.use(express.json()) // Takes the JSON data that came with the request, transforms it into an object and sets it as the body field of the request object                          
+// Allows to serve static files in the given directory (a middleware built into express, do not need to install separately)
+// Using this express will first check if a file matching the given path in a GET-requests exists in the given directory, and then return it to the browser instead
+app.use(express.static('build'))
+app.use(express.json()) // Takes the JSON data that came with the request, transforms it into an object and sets it as the body field of the request object
 app.use(cors()) // Allows requests from other origins (CORS), so axios (in the front-end) can get fetch data from this back-end
 app.use(morgan(':method :url :status :response-time ms :body')) // Logs HTTP requests
 
@@ -48,10 +48,11 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/entries', (request, response, next) => {
-  Entry.find({}).then(entries => {
-    response.json(entries)
-  })
-  .catch(error => next(error))
+  Entry.find({})
+    .then(entries => {
+      response.json(entries)
+    })
+    .catch(error => next(error))
 })
 
 app.get('/api/entries/:id', (request, response, next) => {
@@ -63,16 +64,16 @@ app.get('/api/entries/:id', (request, response, next) => {
         response.status(404).end()
       }
     })
-    .catch(error => next(error)) 
+    .catch(error => next(error))
     // without a parameter, function next() ignores this route and transfer to the next route/middleware
     // with a parameter, function next(parameter) will transfer to an error-handling middleware
 
-    // example of non-middleware error handling
-    // .catch(error => { 
-    //   // given id does not match the format of MongoDB ids.
-    //   console.log(error) 
-    //   response.status(400).send({ error: 'malformatted id' })
-    // })
+  // example of non-middleware error handling
+  // .catch(error => {
+  //   // given id does not match the format of MongoDB ids.
+  //   console.log(error)
+  //   response.status(400).send({ error: 'malformatted id' })
+  // })
 })
 
 app.delete('/api/entries/:id', (request, response, next) => {
@@ -96,7 +97,7 @@ app.post('/api/entries', (request, response, next) => {
   //   .then(savedEntry => savedEntry.toJSON()) // returns returns a promise with the formatted entry
   //   .then(savedAndFormattedEntry => {
   //     return response.json(savedAndFormattedEntry)
-  //   }) 
+  //   })
   //   .catch(error => next(error))
 
   entry.save() // in our case this is fine though
@@ -117,7 +118,7 @@ app.put('/api/entries/:id', (request, response, next) => {
   // by default findByIdAndUpdate returns the _previous_ state of the updated object (before changes)
   // by using the parameter new:true it will return the current updated state instead
   // As of now updating an entry does not run validators, so an entry can be updated with an invalid name or number, to change this, add runValidators:true to options
-  Entry.findByIdAndUpdate(request.params.id, entry, { new: true }) 
+  Entry.findByIdAndUpdate(request.params.id, entry, { new: true })
     .then(updatedEntry => {
       response.json(updatedEntry)
     })
