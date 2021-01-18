@@ -116,6 +116,7 @@ app.put('/api/entries/:id', (request, response, next) => {
 
   // by default findByIdAndUpdate returns the _previous_ state of the updated object (before changes)
   // by using the parameter new:true it will return the current updated state instead
+  // As of now updating an entry does not run validators, so an entry can be updated with an invalid name or number, to change this, add runValidators:true to options
   Entry.findByIdAndUpdate(request.params.id, entry, { new: true }) 
     .then(updatedEntry => {
       response.json(updatedEntry)
